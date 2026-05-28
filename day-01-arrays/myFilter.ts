@@ -10,13 +10,18 @@
 
 export default function myFilter<T>(arr:T[],fn:(el:T)=>boolean):T[]{
     const result:T[]=[];
-
-    for (let i=0;i<arr.length;i++){
-        let res = fn(arr[i] as T);
-        console.log(res,'ress')
+// With noUncheckedIndexedAccess enabled, TS types arr[i] as `T | undefined`,
+// not `T`. That's because indexing an array by number could be out of bounds
+// at runtime (e.g. arr[99] on a 3-item array is undefined), and TS can't
+// verify the index is valid just by looking at the code.
+// So it forces me to acknowledge the `undefined` case.
+//
+// Using `for...of` avoids this entirely — it only ever yields real elements,
+// so each one is typed as plain `T`. No cast, no undefined.
+    for (const el of arr){
+        let res = fn(el);
         if(res){
-            console.log(arr[i],'arri')
-            result.push(arr[i] as T)
+            result.push(el)
         }
     }
     return result
