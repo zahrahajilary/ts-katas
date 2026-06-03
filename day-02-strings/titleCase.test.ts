@@ -1,11 +1,11 @@
 import{describe,test,expect} from "vitest";
-import capitalize from "./capitalize";
+import titleCase from "./titleCase";
 describe("capitalize", () => {
     test("should capitalize first letter", () => {
-        expect(capitalize("hello")).toBe("Hello");
+        expect(titleCase("hello")).toBe("Hello");
     });
 
     test("should capitalize first letter", () => {
-        expect(capitalize("hello is a new world")).toBe("Hello Is A New World");
+        expect(titleCase("hello is a new world")).toBe("Hello Is A New World");
     });
 });
