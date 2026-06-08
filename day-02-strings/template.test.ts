@@ -6,4 +6,8 @@ describe('template', () => {
         const result = template('Hello {{name}}', { name: 'John' })
         expect(result).toBe('Hello John')
     })
+    it('should handle missing variables', () => {
+        const result = template('Hello {{name}}', {})
+        expect(result).toBe('Hello ')
+    })
 })
