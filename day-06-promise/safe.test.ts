@@ -109,50 +109,39 @@ describe('safe', () => {
     })
 
     it('always resolves — you never need try/catch around safe()', async () => {
-        // this is the whole POINT of safe()
-        // compare:
+        const resultPromise = safe(rejectAfter('error', 100))
+        await vi.advanceTimersByTimeAsync(100)  // ✅ advance BEFORE awaiting safe
 
-        // WITHOUT safe — need try/catch
-        // try {
-        //     const value = await rejectAfter('error', 100)
-        // } catch(e) {
-        //     console.log(e)
-        // }
+        const [err, value] = await resultPromise
 
-        // WITH safe — no try/catch needed
-        const [err, value] = await safe(rejectAfter('error', 100)
-            .finally(() => vi.advanceTimersByTimeAsync(100)))
-
-        // just check the tuple — no try/catch anywhere
         expect(err).toBeInstanceOf(Error)
         expect(value).toBeNull()
     })
-
     // ─────────────────────────────────────────
     // REAL WORLD USE CASE
     // ─────────────────────────────────────────
 
     it('real world — handling API calls without try/catch', async () => {
-        // simulates a fetch call
         async function fetchUser(id: number): Promise<{ id: number; name: string }> {
             if (id === 0) throw new Error('User not found')
             return resolveAfter({ id, name: 'Zahra' }, 100)
         }
 
         // SUCCESS case
-        const [err1, user] = await safe(fetchUser(1)
-            .finally(() => vi.advanceTimersByTimeAsync(100)))
+        const p1 = safe(fetchUser(1))
+        await vi.advanceTimersByTimeAsync(100)  // ✅ advance first
+        const [err1, user] = await p1
+
         expect(err1).toBeNull()
         expect(user?.name).toBe('Zahra')
 
-        // FAILURE case — no try/catch needed
+        // FAILURE case — synchronous reject, no timer needed
         const [err2, noUser] = await safe(
             Promise.reject(new Error('User not found'))
         )
         expect(err2?.message).toBe('User not found')
         expect(noUser).toBeNull()
     })
-
     // ─────────────────────────────────────────
     // TUPLE SHAPE
     // ─────────────────────────────────────────
