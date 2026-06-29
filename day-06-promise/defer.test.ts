@@ -1,18 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import race from './race'
 import defer from './defer'
-
-// ─────────────────────────────────────────────
-// HELPERS
-// ─────────────────────────────────────────────
-function resolveAfter<T>(value: T, ms: number): Promise<T> {
-    return new Promise(resolve => setTimeout(() => resolve(value), ms))
-}
-
-function rejectAfter(error: string, ms: number): Promise<never> {
-    return new Promise((_, reject) => setTimeout(() => reject(new Error(error)), ms))
-}
-// ─────────────────────────────────────────────
 describe('defer', () => {
     beforeEach(() => vi.useFakeTimers())
     afterEach(() => vi.useRealTimers())
