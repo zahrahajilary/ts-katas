@@ -9,7 +9,7 @@ describe('test compose functionality', () => {
         const addTen = (n: number) => n + 10;
         const cal = compose(double, addTen);
         const res = cal(2)
-        expect(res).toEqual(14) // addTen(2)=12, double(12)=24... wait, check below
+        expect(res).toEqual(24) // addTen(2)=12, double(12)=24... wait, check below
     })
 
     test('order is right-to-left', () => {
